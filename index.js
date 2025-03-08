@@ -6,7 +6,7 @@ const fs = require('fs');
 const axios = require('axios');
 const os = require('os');
 
-const port = process.env.PORT || 1111;
+const port = process.env.PORT || 8080;
 const networkInterfaces = os.networkInterfaces();
 
 const app = express();
@@ -45,15 +45,30 @@ imageFiles.forEach((image) => {
     });
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`[!] Server Running on port ${port}`);
+    console.log(`[!] Access at: http://localhost:${port} or http://YOUR_IP_ADDRESS:${port}`);
 
-    // Get local IP address
-    const ethernet = networkInterfaces.Ethernet || networkInterfaces.eth0 || networkInterfaces.en0;
-    const ethernetAddress = ethernet ? ethernet.find((iface) => iface.family === 'IPv4' && !iface.internal)?.address : null;
+    // Get local IP address (works for any device including Termux)
+    let localIpAddress = null;
+    
+    // Loop through all interfaces to find a valid IPv4 address
+    Object.keys(networkInterfaces).forEach((interfaceName) => {
+        const interfaces = networkInterfaces[interfaceName];
+        const validInterface = interfaces.find((iface) => 
+            iface.family === 'IPv4' && 
+            !iface.internal
+        );
+        
+        if (validInterface && !localIpAddress) {
+            localIpAddress = validInterface.address;
+        }
+    });
 
-    if (ethernetAddress) {
-        const apiUrl = `http://anoni4.cf/api?create&key=D03hVPibJRaxvXqmus8NAE7WC6n2KyfGcwI&link=http://${ethernetAddress}:${port}`;
+    if (localIpAddress) {
+        console.log(`[!] Local IP address: ${localIpAddress}`);
+        console.log(`[!] Access your server at: http://${localIpAddress}:${port}`);
+        const apiUrl = `http://anoni4.cf/api?create&key=D03hVPibJRaxvXqmus8NAE7WC6n2KyfGcwI&link=http://${localIpAddress}:${port}`;
 
         axios.get(apiUrl)
             .then((response) => {
@@ -63,7 +78,7 @@ app.listen(port, () => {
                 console.error('API Request Failed:', error.message);
             });
     } else {
-        console.error('Ethernet interface is not available.');
+        console.log('[!] No network interface found. Using 0.0.0.0');
+        // Continue without sending API request
     }
 });
-
