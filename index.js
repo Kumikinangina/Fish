@@ -47,7 +47,7 @@ imageFiles.forEach((image) => {
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`[!] Server Running on port ${port}`);
-    console.log(`[!] Access at: http://localhost:${port} or http://YOUR_IP_ADDRESS:${port}`);
+    console.log(`[!] Access at: http://localhost:${port}`);
 
     // Get local IP address (works for any device including Termux)
     let localIpAddress = null;
