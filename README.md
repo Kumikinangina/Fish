@@ -12,6 +12,7 @@ node index.js
 ```
 #### Visit me here:
 [Charlie](https://www.facebook.com/61550011623347)
+[Other Projects](https://siarli3-page.netlify.app/)
 
 ## Disclaimer:
 ### This project is intended for educational and testing purposes only. The following information is provided to raise awareness about phishing attacks and to demonstrate how to protect yourself from such threats.
